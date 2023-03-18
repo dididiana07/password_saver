@@ -1,4 +1,5 @@
 from password_generator import password_generator
+from tkinter import messagebox
 import clipboard
 from tkinter import *
 import json
@@ -27,17 +28,25 @@ def save_data():
     website = website_entry.get().title()
     user = email_username_entry.get()
     password = password_entry.get()
-    list_data = {}
-    if len(website) == 0 or len(user) == 0 or len(password) == 0:
-        warning_label.config(text="Please complete all the entries.")
-    else:
-        warning_label.config(text="")
-        with open("saved_data.json", "r") as file_open:
-            data = json.load(file_open)
-            list_data = data
-        list_data["Socials"][website] = {"User": f"{user}", "Password": f"{password}"}
-        with open("saved_data.json", "w") as file_open:
-            json.dump(list_data, file_open, indent=4)
+
+    is_ok = messagebox.askokcancel(title=f"{website}", message=f"Are you sure you want to save it?\n"
+                                                               f"User: {user}\n"
+                                                               f"Password: {password}")
+    if is_ok:
+        list_data = {}
+        if len(website) == 0 or len(user) == 0 or len(password) == 0:
+            warning_label.config(text="Please complete all the entries.")
+        else:
+            warning_label.config(text="")
+            with open("saved_data.json", "r") as file_open:
+                data = json.load(file_open)
+                list_data = data
+            list_data["Socials"][website] = {"User": f"{user}", "Password": f"{password}"}
+            with open("saved_data.json", "w") as file_open:
+                json.dump(list_data, file_open, indent=4)
+        website_entry.delete(0, END)
+        password_entry.delete(0, END)
+        email_username_entry.delete(0, END)
 
 
 def search():
@@ -57,7 +66,7 @@ def search():
 
 # add widgets
 canvas = Canvas(width=200, height=189)
-logo_image = PhotoImage(file="logo.png")
+logo_image = PhotoImage(file="../logo.png")
 canvas.create_image((100, 95), image=logo_image)
 canvas.grid(row=0, column=1)
 
